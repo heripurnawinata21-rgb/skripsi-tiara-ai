@@ -7,29 +7,8 @@ Aplikasi Interface untuk Fasilitas Pengomposan Swadaya Masyarakat Desa.
 import streamlit as st
 import cv2
 import numpy as np
-import tensorflow as tf
 
 st.set_page_config(page_title="AI Pengomposan Desa - Tiara", page_icon="🌱", layout="centered")
-
-@st.cache_resource
-def load_skripsi_model():
-    input_shape = (224, 224, 3)
-    inputs = tf.keras.layers.Input(shape=input_shape, name="Input_Layer")
-    x = tf.keras.layers.Conv2D(32, (3, 3), activation='relu', name='Conv2D_1')(inputs)
-    x = tf.keras.layers.MaxPooling2D((2, 2), name='MaxPool_1')(x)
-    x = tf.keras.layers.Conv2D(64, (3, 3), activation='relu', name='Conv2D_2')(x)
-    x = tf.keras.layers.MaxPooling2D((2, 2), name='MaxPool_2')(x)
-    x = tf.keras.layers.Conv2D(128, (3, 3), activation='relu', name='Conv2D_3')(x)
-    x = tf.keras.layers.MaxPooling2D((2, 2), name='MaxPool_3')(x)
-    flatten = tf.keras.layers.Flatten(name='Flatten')(x)
-    shared_dense = tf.keras.layers.Dense(512, activation='relu', name='Dense_Shared')(flatten)
-    dropout = tf.keras.layers.Dropout(0.5, name='Dropout')(shared_dense)
-    output_class = tf.keras.layers.Dense(3, activation='softmax', name='Output_Class')(dropout)
-    output_bbox = tf.keras.layers.Dense(4, activation='linear', name='Output_BBox')(dropout)
-    model = tf.keras.models.Model(inputs=inputs, outputs=[output_class, output_bbox])
-    return model
-
-model = load_skripsi_model()
 
 def proses_volume_dan_dss(bbox_pred, class_id, w_orig, h_orig):
     x_min, y_min, x_max, y_max = bbox_pred
